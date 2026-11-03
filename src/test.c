@@ -5,33 +5,33 @@ int main(void) {
     bg_process_t proc;
     int exit_code = 0;
 
-    /* Тест 1: запуск простой команды */
+    /* Test 1: run simple command */
 #ifdef _WIN32
     const char* cmd = "cmd /c echo Hello from Windows";
 #else
-    const char* cmd = "echo Hello from LINUX";
+    const char* cmd = "echo Hello from Linux";
 #endif
 
-    printf("=== Test 1: запуск команды ===\n");
-    printf("Команда: %s\n", cmd);
+    printf("=== Test 1: run command ===\n");
+    printf("Command: %s\n", cmd);
 
     if (bg_process_start(cmd, &proc) != 0) {
-        printf("FAIL: не удалось запустить процесс\n");
+        printf("FAIL: could not start process\n");
         return 1;
     }
-    printf("Процесс запущен в фоне\n");
+    printf("Process started in background\n");
 
-    printf("Ожидаем завершения...\n");
+    printf("Waiting for completion...\n");
     if (bg_process_wait(&proc, &exit_code) != 0) {
-        printf("ошибка ожидания\n");
+        printf("FAIL: wait error\n");
         bg_process_free(&proc);
         return 1;
     }
-    printf("Процесс завершён с кодом: %d\n", exit_code);
+    printf("Process finished with code: %d\n", exit_code);
     bg_process_free(&proc);
 
-    /* Тест 2: запуск несуществующей программы */
-    printf("\n=== Test 2: несуществующая команда ===\n");
+    /* Test 2: run nonexistent program */
+    printf("\n=== Test 2: nonexistent command ===\n");
 #ifdef _WIN32
     const char* bad_cmd = "cmd /c nonexistent_xyz_123";
 #else
@@ -40,26 +40,26 @@ int main(void) {
 
     if (bg_process_start(bad_cmd, &proc) == 0) {
         bg_process_wait(&proc, &exit_code);
-        printf("Код возврата несуществующей команды: %d \n", exit_code);
+        printf("Exit code of nonexistent command: %d \n", exit_code);
         bg_process_free(&proc);
     } else {
-        printf("Процесс не запустился\n");
+        printf("Process did not start (this is also correct behavior)\n");
     }
 
-    /* Тест 3: запуск команды с задержкой, чтобы убедиться в фоновом режиме */
-    printf("\n=== Test 3: фоновый режим (sleep/timeout) ===\n");
+    /* Test 3: background mode with delay */
+    printf("\n=== Test 3: background mode (sleep/timeout) ===\n");
 #ifdef _WIN32
     const char* sleep_cmd = "timeout /t 2 /nobreak >nul";
 #else
     const char* sleep_cmd = "sleep 2";
 #endif
-    printf("Запускаем '%s' — должно занять ~2 секунды\n", sleep_cmd);
+    printf("Running '%s' — should take ~2 seconds\n", sleep_cmd);
     bg_process_start(sleep_cmd, &proc);
-    printf("Мы уже здесь! Программа работает в фоне.\n");
+    printf("We are here already! Program works in background.\n");
     bg_process_wait(&proc, &exit_code);
-    printf("Готово, код: %d\n", exit_code);
+    printf("Done, code: %d\n", exit_code);
     bg_process_free(&proc);
 
-    printf("\nВсе тесты пройдены.\n");
+    printf("\nAll tests passed.\n");
     return 0;
 }
