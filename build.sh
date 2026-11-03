@@ -8,5 +8,3 @@ cd build
 
 cmake ..
 make
-
-./hello_world

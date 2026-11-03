@@ -9,6 +9,5 @@ cmake .. -G "MinGW Makefiles"
 
 mingw32-make
 
-echo Сборка завершена!
-hello_world.exe
+echo Build Complete!
 pause
